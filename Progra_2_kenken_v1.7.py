@@ -100,6 +100,31 @@ class jugar(tkinter.Tk):
         self.resizable(width=False, height=False)
         self.title("Jugar")
         self.geometry("800x400")
+ # Leer partidas del archivo kenken_juegos.dat y almacenarla en un diccionario:
+# llave del diccionario: nivel de la partida y un consecutivo
+# valor del diccionario: otro diccionario con el detalle de la partida
+# Estructura del diccionario del detalle de la partida:
+# llave: numero de la jaula
+# valor: operacion de la jaula y casillas que la componen 
+
+        f = open("kenken_juegos2.dat")
+        numero_partida = 0   # consecutivo para cada partida en el diccionario
+        partidas = {}   # diccionario con todas las partidas
+        while True:
+            l = f.readline()
+            if l=="": break  # EOF fin de archivo
+            n = l[0] # nivel de la partida
+            d = eval(l[2:-1]) # diccionario de esta partida
+            numero_partida = numero_partida + 1
+            partidas [n + str(numero_partida)]=d
+        f.close()
+
+        # ver el diccionario de partidas
+        for d in partidas:
+            print("Nivel de la partida:", d[0],"     consecutivo:", d[1:])
+            p = partidas[d]
+            for e in p:
+                print(e,p[e])
         #Se crea la etiqueta con el nombre del programa
         self.etiquetaKenken=Label(self,text="KenKen",font=("Arial Black",30))
         self.etiquetaKenken.pack()
@@ -149,22 +174,22 @@ class jugar(tkinter.Tk):
                 etiqueta_Dificultad.place(x=90,y=350)
         #Se definen los botones que conforman la ventana
         # 1
-        self.boton1=Button(self,text="1",width=5,font=("Arial Black",10),bg="gray")
+        self.boton1=Button(self,text="1",width=5,font=("Arial Black",10),bg="gray",command=self.uno)
         self.boton1.place(x=590,y=65)
         #2
-        self.boton2=Button(self,text="2",width=5,font=("Arial Black",10),bg="gray")
+        self.boton2=Button(self,text="2",width=5,font=("Arial Black",10),bg="gray",command=self.dos)
         self.boton2.place(x=590,y=100)
         #3
-        self.boton3=Button(self,text="3",width=5,font=("Arial Black",10),bg="gray")
+        self.boton3=Button(self,text="3",width=5,font=("Arial Black",10),bg="gray",command=self.tres)
         self.boton3.place(x=590,y=135)
         #4
-        self.boton4=Button(self,text="4",width=5,font=("Arial Black",10),bg="gray")
+        self.boton4=Button(self,text="4",width=5,font=("Arial Black",10),bg="gray",command=self.cuatro)
         self.boton4.place(x=590,y=170)
         #5
-        self.boton5=Button(self,text="5",width=5,font=("Arial Black",10),bg="gray")
+        self.boton5=Button(self,text="5",width=5,font=("Arial Black",10),bg="gray",command=self.cinco)
         self.boton5.place(x=590,y=205)
         #6
-        self.boton6=Button(self,text="6",width=5,font=("Arial Black",10),bg="gray")
+        self.boton6=Button(self,text="6",width=5,font=("Arial Black",10),bg="gray",command=self.seis)
         self.boton6.place(x=590,y=240)
        #Borrar
         self.botonBorrar=Button(self,text="Borrar",width=5,font=("Arial Black",10),bg="gray")
@@ -187,6 +212,7 @@ class jugar(tkinter.Tk):
         #Top 10
         self.botonTop=Button(self,text="Top 10",width=14,font=("Arial Black",10),bg="Light gray")
         self.botonTop.place(x=90,y=240)
+
         #Tamaño labels, intentar hacer recursivo
         horizontal = 55  # para cambia,font=("Arial Black", 10)r tamaño
         vertical = 40
@@ -300,6 +326,25 @@ class jugar(tkinter.Tk):
 
         self.cuadro36 = Entry(self, width=3, font=("Arial Black", 18))
         self.cuadro36.place(x=x + horizontal * 5, y=y + vertical * 5)
+    #Se define la funcion asociada a cada boton
+    #1
+    def uno(self):
+        print("1")
+    #2
+    def dos(self):
+        print("2")
+    #3
+    def tres(self):
+        print("3")
+     #4
+    def cuatro(self):
+         print ("4")
+    #5
+    def cinco(self):
+        print("5")
+    #6
+    def seis(self):
+         print("6")
 #   Se crea la clase configurar
 class configurar(tkinter.Tk):
     def __init__(self):
