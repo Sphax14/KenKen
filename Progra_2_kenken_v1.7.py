@@ -32,10 +32,12 @@ class menu(tkinter.Tk):
         global dificultad
         global reloj
         global sonido
+        global dimensiones
         #Se asigna a cada variable el ultimo valor almacenado en el archivo .dat
         dificultad =lista_config[0]
         reloj=lista_config[1]
         sonido=lista_config[2]
+        dimensiones=lista_config[3]
     # opción jugar, destruye la ventana actual y llama a la ventana Nombre
     def  jugar(menu):
         menu.destroy()
@@ -93,213 +95,185 @@ class nombre(tkinter.Tk):
 class jugar(tkinter.Tk):
     def __init__(self):
         tkinter.Tk.__init__(self)
-        #Se llama a las variables globales 
+        #Se lee el archivo.dat
+        configuracion=open("configuracion.dat","r")
+        lista_config=list(configuracion.readline())
+        configuracion.close()
+         #Se llama a la variable global dimensiones
+        global dimensiones
+        #Se asigna el valor a dimensiones
+        dimensiones=lista_config[3]
+        #Se llama a las variables global nombreJugador
         global nombreJugador
-        
+        #Se crea la cuadricula del juego 
+        tt=Frame()
+        tt.grid(column=0,row=0,padx=(200,200),pady=(50,50))
+        tt.rowconfigure(0,weight=5)
+        tt.columnconfigure(0,weight=5)
+        dimensiones=str(dimensiones)
+        if dimensiones=="0":
+            n=6
+        elif dimensiones=="1":
+            n=3
+        elif dimensiones=="2":
+            n=4
+        elif dimensiones=="3":
+            n=5
+        elif dimensiones=="4":
+            n=7
+        elif dimensiones=="5":
+            n=8
+        elif dimensiones=="6":
+            n=9
+        elif dimensiones=="7":
+            n=10
+        #Se crean las celdas con las dimiensiones indicadas
+        if n<10:
+            for i in range (1,n+1):
+                for j in range(1,n+1):
+                    nombre="c"+str(i)+str(j)
+                    nombre=Entry(tt,text=nombre,width=3, font=("Arial Black", 18))
+                    nombre.grid(column=j,row=i)
+
         #Se establece la ventana como no redimencionable, se establece el titulo y tamaño de la misma
         self.resizable(width=False, height=False)
         self.title("Jugar")
         self.geometry("800x400")
+
+
+
+ # Leer partidas del archivo kenken_juegos.dat y almacenarla en un diccionario:
+# llave del diccionario: nivel de la partida y un consecutivo
+# valor del diccionario: otro diccionario con el detalle de la partida
+# Estructura del diccionario del detalle de la partida:
+# llave: numero de la jaula
+# valor: operacion de la jaula y casillas que la componen 
+
+        f = open("kenken_juegos2.dat")
+        numero_partida = 0   # consecutivo para cada partida en el diccionario
+        partidas = {}   # diccionario con todas las partidas
+        while True:
+            l = f.readline()
+            if l=="": break  # EOF fin de archivo
+            n = l[0] # nivel de la partida
+            d = eval(l[2:-1]) # diccionario de esta partida
+            numero_partida = numero_partida + 1
+            partidas [n + str(numero_partida)]=d
+        f.close()
+
+        # ver el diccionario de partidas
+        for d in partidas:
+            print("Nivel de la partida:", d[0],"     consecutivo:", d[1:])
+            p = partidas[d]
+            for e in p:
+                print(e,p[e])
         #Se crea la etiqueta con el nombre del programa
-        self.etiquetaKenken=Label(self,text="KenKen",font=("Arial Black",30))
-        self.etiquetaKenken.pack()
+        self.etiquetaKenken=Label(self,text="KenKen",font=("Arial Black",30),fg="Dark Blue")
+        self.etiquetaKenken.place(x=10,y=5)
         #Se obtiene el valor ingresado por el usuario en la ventana nombre y se le asigna ese valor a la variable
         nombre=nombreJugador.get()
         #Si no se ingreso ningun valor en la ventana nombre se hace lo siguiente: 
         if nombre == "":
             #Se establece el nombre jugador como player y se coloca la etiqueta que muestra este dato en la ventana
-            etiquetaNombre = Label(self, text=("Jugador: Player"), width=30, font=("Arial Black", 10))
-            etiquetaNombre.place(x=10,y=310)
+            etiquetaNombre = Label(self, text=("Jugador: Player"), font=("Arial Black", 10))
+            etiquetaNombre.place(x=5,y=320)
         #Si se ingreso información:
         else:
             #Se asigna el valor de la información a la etiqueta y se coloca en la ventana
-            etiquetaNombre = Label(self, text=("Jugador:", nombre), width=30, font=("Arial Black", 10))
-            etiquetaNombre.place(x=10,y=310)
+            etiquetaNombre = Label(self, text=("Jugador:", nombre), font=("Arial Black", 10))
+            etiquetaNombre.place(x=5,y=320)
         #Se muestra en pantalla la dificultad elegida
         #Se llama la variable global dificultad
-        global dificulta5
+        global dificultad
         #Se evalua el valor de la variable dificultad y se imprime en pantalla
         try:
             nivel=int(dificultad)
             #Facil
             if nivel==0:
                 etiqueta_Dificultad=Label(self,text="Dificultad: Facil",font=("Arial Black", 10))
-                etiqueta_Dificultad.place(x=90,y=350)
+                etiqueta_Dificultad.place(x=5,y=350)
              #Intermedia
             elif nivel==1:
                 etiqueta_Dificultad=Label(self,text="Dificultad: Intermedia",font=("Arial Black", 10))
-                etiqueta_Dificultad.place(x=90,y=350)
+                etiqueta_Dificultad.place(x=5,y=350)
             #Dificil
             elif nivel==2:
                 etiqueta_Dificultad=Label(self,text="Dificultad: Dificil",font=("Arial Black", 10))
-                etiqueta_Dificultad.place(x=90,y=350)
+                etiqueta_Dificultad.place(x=5,y=350)
         except:
             nivel=dificultad.get()
             #Facil
             if nivel==0:
                 etiqueta_Dificultad=Label(self,text="Dificultad: Facil",font=("Arial Black", 10))
-                etiqueta_Dificultad.place(x=90,y=350)
+                etiqueta_Dificultad.place(x=5,y=350)
              #Intermedia
             elif nivel==1:
                 etiqueta_Dificultad=Label(self,text="Dificultad: Intermedia",font=("Arial Black", 10))
-                etiqueta_Dificultad.place(x=90,y=350)
+                etiqueta_Dificultad.place(x=5,y=350)
             #Dificil
             elif nivel==2:
                 etiqueta_Dificultad=Label(self,text="Dificultad: Dificil",font=("Arial Black", 10))
-                etiqueta_Dificultad.place(x=90,y=350)
+                etiqueta_Dificultad.place(x=5,y=350)
         #Se definen los botones que conforman la ventana
         # 1
-        self.boton1=Button(self,text="1",width=5,font=("Arial Black",10),bg="gray")
-        self.boton1.place(x=590,y=65)
+        self.boton1=Button(self,text="1",width=5,font=("Arial Black",10),bg="gray",command=self.uno)
+        self.boton1.place(x=740,y=65)
         #2
-        self.boton2=Button(self,text="2",width=5,font=("Arial Black",10),bg="gray")
-        self.boton2.place(x=590,y=100)
+        self.boton2=Button(self,text="2",width=5,font=("Arial Black",10),bg="gray",command=self.dos)
+        self.boton2.place(x=740,y=100)
         #3
-        self.boton3=Button(self,text="3",width=5,font=("Arial Black",10),bg="gray")
-        self.boton3.place(x=590,y=135)
+        self.boton3=Button(self,text="3",width=5,font=("Arial Black",10),bg="gray",command=self.tres)
+        self.boton3.place(x=740,y=135)
         #4
-        self.boton4=Button(self,text="4",width=5,font=("Arial Black",10),bg="gray")
-        self.boton4.place(x=590,y=170)
+        self.boton4=Button(self,text="4",width=5,font=("Arial Black",10),bg="gray",command=self.cuatro)
+        self.boton4.place(x=740,y=170)
         #5
-        self.boton5=Button(self,text="5",width=5,font=("Arial Black",10),bg="gray")
-        self.boton5.place(x=590,y=205)
+        self.boton5=Button(self,text="5",width=5,font=("Arial Black",10),bg="gray",command=self.cinco)
+        self.boton5.place(x=740,y=205)
         #6
-        self.boton6=Button(self,text="6",width=5,font=("Arial Black",10),bg="gray")
-        self.boton6.place(x=590,y=240)
+        self.boton6=Button(self,text="6",width=5,font=("Arial Black",10),bg="gray",command=self.seis)
+        self.boton6.place(x=740,y=240)
        #Borrar
         self.botonBorrar=Button(self,text="Borrar",width=5,font=("Arial Black",10),bg="gray")
-        self.botonBorrar.place(x=590,y=275)
+        self.botonBorrar.place(x=740,y=275)
         #Iniciar juego
         self.botonIniciar=Button(self,text="Iniciar Juego",width=14,font=("Arial Black",10),bg="Light gray")
-        self.botonIniciar.place(x=90,y=65)
+        self.botonIniciar.place(x=5,y=65)
         #Validar juego
         self.botonValidar=Button(self,text="Validar Juego",width=14,font=("Arial Black",10),bg="Light gray")
-        self.botonValidar.place(x=90,y=100)
+        self.botonValidar.place(x=5,y=100)
         #Otro  juego
         self.botonOtro=Button(self,text="Otro Juego",width=14,font=("Arial Black",10),bg="Light gray")
-        self.botonOtro.place(x=90,y=135)
+        self.botonOtro.place(x=5,y=135)
         #Reiniciar juego
         self.botonReiniciar=Button(self,text="Reiciar Juego",width=14,font=("Arial Black",10),bg="Light gray")
-        self.botonReiniciar.place(x=90,y=170)
+        self.botonReiniciar.place(x=5,y=170)
         #Terminar juego
         self.botonTerminar=Button(self,text="Terminar Juego",width=14,font=("Arial Black",10),bg="Light gray")
-        self.botonTerminar.place(x=90,y=205)
+        self.botonTerminar.place(x=5,y=205)
         #Top 10
         self.botonTop=Button(self,text="Top 10",width=14,font=("Arial Black",10),bg="Light gray")
-        self.botonTop.place(x=90,y=240)
-        #Tamaño labels, intentar hacer recursivo
-        horizontal = 55  # para cambia,font=("Arial Black", 10)r tamaño
-        vertical = 40
-        x = 240  # para cambiar ubicacion
-        y = 65
+        self.botonTop.place(x=5,y=240)
 
-        self.cuadro1 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro1.place(x=x, y=y)
-
-        self.cuadro2 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro2.place(x=x + horizontal, y=y)
-
-        self.cuadro3 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro3.place(x=x + horizontal * 2, y=y)
-
-        self.cuadro4 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro4.place(x=x + horizontal * 3, y=y)
-
-        self.cuadro5 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro5.place(x=x + horizontal * 4, y=y)
-
-        self.cuadro6 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro6.place(x=x + horizontal * 5, y=y)
-
-        self.cuadro7 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro7.place(x=x, y=y + vertical)
-
-        self.cuadro8 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro8.place(x=x + horizontal, y=y + vertical)
-
-        self.cuadro9 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro9.place(x=x + horizontal * 2, y=y + vertical)
-
-        self.cuadro10 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro10.place(x=x + horizontal * 3, y=y + vertical)
-
-        self.cuadro11 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro11.place(x=x + horizontal * 4, y=y + vertical)
-
-        self.cuadro12 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro12.place(x=x + horizontal * 5, y=y + vertical)
-
-        self.cuadro13 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro13.place(x=x, y=y + vertical * 2)
-
-        self.cuadro14 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro14.place(x=x + horizontal, y=y + vertical * 2)
-
-        self.cuadro15 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro15.place(x=x + horizontal * 2, y=y + vertical * 2)
-
-        self.cuadro16 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro16.place(x=x + horizontal * 3, y=y + vertical * 2)
-
-        self.cuadro17 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro17.place(x=x + horizontal * 4, y=y + vertical * 2)
-
-        self.cuadro18 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro18.place(x=x + horizontal * 5, y=y + vertical * 2)
-
-        self.cuadro19 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro19.place(x=x, y=y + vertical * 3)
-
-        self.cuadro20 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro20.place(x=x + horizontal, y=y + vertical * 3)
-
-        self.cuadro21 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro21.place(x=x + horizontal * 2, y=y + vertical * 3)
-
-        self.cuadro22 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro22.place(x=x + horizontal * 3, y=y + vertical * 3)
-
-        self.cuadro23 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro23.place(x=x + horizontal * 4, y=y + vertical * 3)
-
-        self.cuadro24 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro24.place(x=x + horizontal * 5, y=y + vertical * 3)
-
-        self.cuadro25 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro25.place(x=x, y=y + vertical * 4)
-
-        self.cuadro26 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro26.place(x=x + horizontal, y=y + vertical * 4)
-
-        self.cuadro27 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro27.place(x=x + horizontal * 2, y=y + vertical * 4)
-
-        self.cuadro28 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro28.place(x=x + horizontal * 3, y=y + vertical * 4)
-
-        self.cuadro29 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro29.place(x=x + horizontal * 4, y=y + vertical * 4)
-
-        self.cuadro30 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro30.place(x=x + horizontal * 5, y=y + vertical * 4)
-
-        self.cuadro31 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro31.place(x=x, y=y + vertical * 5)
-
-        self.cuadro32 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro32.place(x=x + horizontal, y=y + vertical * 5)
-
-        self.cuadro33 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro33.place(x=x + horizontal * 2, y=y + vertical * 5)
-
-        self.cuadro34 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro34.place(x=x + horizontal * 3, y=y + vertical * 5)
-
-        self.cuadro35 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro35.place(x=x + horizontal * 4, y=y + vertical * 5)
-
-        self.cuadro36 = Entry(self, width=3, font=("Arial Black", 18))
-        self.cuadro36.place(x=x + horizontal * 5, y=y + vertical * 5)
+    #Se define la funcion asociada a cada boton
+    #1
+    def uno(self):
+        print("1")
+    #2
+    def dos(self):
+        print("2")
+    #3
+    def tres(self):
+        print("3")
+     #4
+    def cuatro(self):
+         print ("4")
+    #5
+    def cinco(self):
+        print("5")
+    #6
+    def seis(self):
+         print("6")
 #   Se crea la clase configurar
 class configurar(tkinter.Tk):
     def __init__(self):
@@ -341,26 +315,80 @@ class configurar(tkinter.Tk):
         #Reloj Timer
         rTimer = Radiobutton(self,text='Timer', value=2, variable=reloj)
         rTimer.place(x=10,y=160)
+        #Pronostico de tiempo:
+        global h
+        global m
+        global s
+        #Se colocan los Spinbox y etiquetaas para tomar el pronostico del tiempo
+        self.etiqueta_Timer=Label(self,text="Tiempo a utilizar:",font=("Arial Black",10))
+        self.etiqueta_Timer.place(x=10,y=200)
+        #Horas
+        h=Spinbox(self, from_=0, to=23,width=4)
+        h.place(x=20,y=270)
+        self.etiqueta_Horas=Label(self,text="H",font=("Arial Black",10))
+        self.etiqueta_Horas.place(x=30,y=240)
+        #Minutos
+        m =Spinbox(self, from_=0, to=59,width=4)
+        m.place(x=70,y=270)
+        self.etiqueta_Minutos=Label(self,text="M",font=("Arial Black",10))
+        self.etiqueta_Minutos.place(x=80,y=240)
+        #Segundos
+        s = Spinbox(self, from_=0, to=59,width=4)
+        s.place(x=120,y=270)
+        self.etiqueta_Segundos=Label(self,text="S",font=("Arial Black",10))
+        self.etiqueta_Segundos.place(x=130,y=240)
         #Opcion Sonido
         #Se crea y se coloca la etiqueta sonido
         self.etiqueta_Sonido=Label(self,text="Sonido",font=("Arial Black",10))
-        self.etiqueta_Sonido.place(x=10,y=260)
+        self.etiqueta_Sonido.place(x=200,y=10)
         #Se llama la variable global sonido y se declara como IntVar
         global sonido
         sonido=IntVar()
         #Se crean los RadioButtons
         #Sonido No
         sNo= Radiobutton(self,text="No",value=0,variable=sonido)
-        sNo.place(x=10,y=280)
+        sNo.place(x=200,y=50)
         #Sonido Si
         sSi=Radiobutton(self,text="Si",value=1,variable=sonido)
-        sSi.place(x=10,y=300)
+        sSi.place(x=200,y=30)
         #Se crea el boton Jugar y se coloca en la ventana
         self.bontonJugar=Button(self,text="Jugar",command=self.jugar,font=("Arial Black",10),bg="gray")
         self.bontonJugar.place(x=120,y=330)
         #Se crea el boton menu y se coloca en la ventana
         self.botonMenu=Button(self,text="Menu",command=self.menu,font=("Arial Black",10),bg="gray",width=5)
         self.botonMenu.place(x=220,y=330)
+        #Opción dimensiones 
+        #Se crea y se coloca la etiqueta sonido
+        self.etiqueta_Dimensiones=Label(self,text="Tamaño",font=("Arial Black",10))
+        self.etiqueta_Dimensiones.place(x=200,y=90)
+        #Se llama a la variable global dimensiones y se declara como IntVar
+        global dimensiones
+        dimensiones=IntVar()
+        #Se crean los RadioButtons
+        #3x3
+        dm3= Radiobutton(self,text="3x3",value=1,variable=dimensiones)
+        dm3.place(x=200,y=120)
+        #4x4
+        dm4= Radiobutton(self,text="4x4",value=2,variable=dimensiones)
+        dm4.place(x=200,y=140)
+        #5x5
+        dm5= Radiobutton(self,text="5x5",value=3,variable=dimensiones)
+        dm5.place(x=200,y=160)
+        #6x6
+        dm6= Radiobutton(self,text="6x6",value=0,variable=dimensiones)
+        dm6.place(x=200,y=180)
+        #7x7
+        dm7= Radiobutton(self,text="7x7",value=4,variable=dimensiones)
+        dm7.place(x=200,y=200)
+        #8x8
+        dm8= Radiobutton(self,text="8x8",value=5,variable=dimensiones)
+        dm8.place(x=200,y=220)
+        #9x9
+        dm9= Radiobutton(self,text="9x9",value=6,variable=dimensiones)
+        dm9.place(x=200,y=240)
+        #Multitamaño
+        dmMulti= Radiobutton(self,text="Multitamaño",value=7,variable=dimensiones)
+        dmMulti.place(x=200,y=260)
     #Se define la función del Boton Jugar
     def jugar(self):
         #Al presionar el boton jugar esta función hace lo siguiente:
@@ -370,6 +398,7 @@ class configurar(tkinter.Tk):
         configurar.write(str(dificultad.get()))
         configurar.write(str(reloj.get()))
         configurar.write(str(sonido.get()))
+        configurar.write(str(dimensiones.get()))
         #Se cierra el archivo, quedando así  guardada la configuración establecida
         configurar.close()
         #Se destruye la ventana actual y crea la ventana nombre, para luego ir a la de jugar
@@ -379,11 +408,12 @@ class configurar(tkinter.Tk):
     def menu(self):
         #Al presionar el boton Menu esta función hace lo siguiente:
         #Abre el archivo que contiene guardadas las configuraciones en modo write
-        configurar=open("configura","w")
+        configurar=open("configuracion.dat","w")
         #El archivo sobreescribe los valores anteriores con los valores actuales
         configurar.write(str(dificultad.get()))
         configurar.write(str(reloj.get()))
         configurar.write(str(sonido.get()))
+        configurar.write(str(dimensiones.get()))
         #Se cierra el archivo, quedando así  guardada la configuración establecida
         configurar.close()
         #Se destruye la ventana actual y crea la ventana menu
@@ -394,4 +424,8 @@ nombreJugador="Player"
 dificultad=0
 reloj=0
 sonido=0
+dimensiones=0
+h=0
+m=0
+s=0
 menu().mainloop()
